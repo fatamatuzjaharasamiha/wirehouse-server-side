@@ -18,20 +18,16 @@ async function run() {
     try {
         await client.connect();
         const productCollection = client.db('electronicsHouse').collection('product')
-        //load all products
-        app.get('/inventory', async (req, res) => {
-            const query = {};
-            const cursor = productCollection.find(query);
-            const products = await cursor.limit(6).toArray()
-            res.send(products);
-        })
-        app.get('/InventoryAll', async (req, res) => {
+
+        console.log('connected')
+        
+        app.get('/inventories', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const products = await cursor.toArray()
             res.send(products);
         })
-        
+
 
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id;
@@ -40,10 +36,19 @@ async function run() {
             res.send(product);
         })
 
-        app.post('/inventory', async (req, res) => {
+        app.post('/add-inventory', async (req, res) => {
             const newProduct = req.body;
+            console.log(newProduct)
+            console.log('posting')
             const result = await productCollection.insertOne(newProduct);
             res.send(result)
+        })
+
+        app.delete('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(query)
+            res.send(result);
         })
 
     }
