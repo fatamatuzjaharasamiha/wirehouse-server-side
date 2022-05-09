@@ -18,7 +18,7 @@ async function run() {
     try {
         await client.connect();
         const productCollection = client.db('electronicsHouse').collection('product')
-        const myCollection = client.db('electronicsHouse').collection('item')
+        
         console.log('connected')
 
         app.get('/inventories', async (req, res) => {
@@ -65,11 +65,7 @@ async function run() {
             const result = await productCollection.updateOne(filter, updatedDoc, options);
         });
         //my item api
-        app.post('/item', async (req, res) => {
-            const item = req.body
-            const result = await myCollection.insertOne(item)
-            res.send(result);
-        })
+        
 
     }
     finally {
