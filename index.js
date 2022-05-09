@@ -18,9 +18,9 @@ async function run() {
     try {
         await client.connect();
         const productCollection = client.db('electronicsHouse').collection('product')
-
+        const myCollection = client.db('electronicsHouse').collection('item')
         console.log('connected')
-        
+
         app.get('/inventories', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
@@ -48,6 +48,26 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await productCollection.deleteOne(query)
+            res.send(result);
+        })
+        app.put('/update-product/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedProductInfo = req.body;
+            console.log(updatedProductInfo)
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedProductInfo.quantity,
+
+                }
+            }
+            const result = await productCollection.updateOne(filter, updatedDoc, options);
+        });
+        //my item api
+        app.post('/item', async (req, res) => {
+            const item = req.body
+            const result = await myCollection.insertOne(item)
             res.send(result);
         })
 
